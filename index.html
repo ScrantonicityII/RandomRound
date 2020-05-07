@@ -1,0 +1,43 @@
+<html>
+
+<head>
+    <meta charset='UTF-8'>
+    <title> Random PG Round </title>
+    <script type='text/javascript'>
+        var start = 31867;
+        var current = 0;
+        function getCurrentRound() {
+            request = new XMLHttpRequest();
+            request.open("GET", "https://api.picturegame.co/current", true);
+            request.onload = () => {
+                response = JSON.parse(request.responseText);
+                current = response.round['roundNumber'];
+            }
+            request.send();
+        }
+    </script>
+</head>
+
+<body onload="getCurrentRound()"> 
+    <button onclick=randomize()> Random Round </button><br>
+
+    <div id='redditLink'></div>
+    <div id='image'></div>
+
+    <script type='text/javascript'>
+        function randomize() {
+            if (current != 0) {
+                var round = Math.floor(Math.random() * (current - start + 1) + start);
+                var query = "https://api.picturegame.co/rounds/" + round;
+                randomRequest = new XMLHttpRequest();
+                randomRequest.open("GET", query, true);
+                randomRequest.onload = () => {
+                    randomResponse = JSON.parse(randomRequest.responseText);
+                    document.getElementById('redditLink').innerHTML = "<a href='https://redd.it/" + randomResponse['id'] +"'> Reddit Link </a>";
+                    document.getElementById('image').innerHTML = "<img src=" + randomResponse['postUrl'] + ">"
+                }
+                randomRequest.send();
+            }
+        }
+    </script>
+</body>
